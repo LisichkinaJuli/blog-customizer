@@ -71,41 +71,13 @@ export const ArticleParamsForm = ({
 		};
 	}, [isFormOpen]);
 
-	const handleFontFamilyChange = (selectedOption: OptionType) => {
-		setFormState((prev) => ({
-			...prev,
-			fontFamilyOption: selectedOption,
-		}));
-	};
-
-	const handleFontSizeChange = (selectedOption: OptionType) => {
-		setFormState((prev) => ({
-			...prev,
-			fontSizeOption: selectedOption,
-		}));
-	};
-
-	const handleFontColorChange = (selectedOption: OptionType) => {
-		setFormState((prev) => ({
-			...prev,
-			fontColor: selectedOption,
-		}));
-	};
-
-	const handleBackgroundColorChange = (selectedOption: OptionType) => {
-		setFormState((prev) => ({
-			...prev,
-			backgroundColor: selectedOption,
-		}));
-	};
-
-	const handleContentWidthChange = (selectedOption: OptionType) => {
-		setFormState((prev) => ({
-			...prev,
-			contentWidth: selectedOption,
-		}));
-	};
-
+	const handleFieldChange =
+		(field: keyof ArticleStateType) => (selectedOption: OptionType) => {
+			setFormState((prev) => ({
+				...prev,
+				[field]: selectedOption,
+			}));
+		};
 	const toggleForm = () => {
 		setIsFormOpen((prev) => !prev);
 	};
@@ -139,14 +111,14 @@ export const ArticleParamsForm = ({
 						options={fontFamilyOptions}
 						placeholder='Выберите шрифт'
 						title='Шрифт'
-						onChange={handleFontFamilyChange}
+						onChange={handleFieldChange('fontFamilyOption')}
 					/>
 
 					<RadioGroup
 						name='fontSize'
 						options={fontSizeOptions}
 						selected={formState.fontSizeOption}
-						onChange={handleFontSizeChange}
+						onChange={handleFieldChange('fontSizeOption')}
 						title='Размер шрифта'
 					/>
 
@@ -158,7 +130,7 @@ export const ArticleParamsForm = ({
 						options={fontColors}
 						placeholder='Выберите цвет шрифта'
 						title='Цвет шрифта'
-						onChange={handleFontColorChange}
+						onChange={handleFieldChange('fontColor')}
 					/>
 
 					<Select
@@ -166,7 +138,7 @@ export const ArticleParamsForm = ({
 						options={backgroundColors}
 						placeholder='Выберите цвет фона'
 						title='Цвет фона'
-						onChange={handleBackgroundColorChange}
+						onChange={handleFieldChange('backgroundColor')}
 					/>
 
 					<Select
@@ -174,7 +146,7 @@ export const ArticleParamsForm = ({
 						options={contentWidthArr}
 						placeholder='Выберите ширину контента'
 						title='Ширина контента'
-						onChange={handleContentWidthChange}
+						onChange={handleFieldChange('contentWidth')}
 					/>
 
 					<div className={styles.bottomContainer}>
