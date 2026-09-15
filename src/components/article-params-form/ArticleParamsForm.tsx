@@ -1,4 +1,11 @@
-import { useState, useRef, useEffect, FormEvent } from 'react';
+import {
+	useState,
+	useRef,
+	useEffect,
+	FormEvent,
+	Dispatch,
+	SetStateAction,
+} from 'react';
 import { ArrowButton } from 'src/ui/arrow-button';
 import { Button } from 'src/ui/button';
 import { Select } from 'src/ui/select';
@@ -20,7 +27,7 @@ import {
 
 interface ArticleParamsFormProps {
 	currentAppState: ArticleStateType;
-	setAppState: (state: ArticleStateType) => void;
+	setAppState: Dispatch<SetStateAction<ArticleStateType>>;
 }
 
 /**
