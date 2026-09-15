@@ -14,7 +14,7 @@ import styles from './app.module.scss';
  * Управляет глобальным состоянием стилей статьи и распределяет их через CSS Custom Properties.
  */
 export const App = () => {
-	const [appState, setAppState] =
+	const [articleState, setArticleState] =
 		useState<ArticleStateType>(defaultArticleState);
 
 	return (
@@ -22,14 +22,17 @@ export const App = () => {
 			className={clsx(styles.main)}
 			style={
 				{
-					'--font-family': appState.fontFamilyOption.value,
-					'--font-size': appState.fontSizeOption.value,
-					'--font-color': appState.fontColor.value,
-					'--container-width': appState.contentWidth.value,
-					'--bg-color': appState.backgroundColor.value,
+					'--font-family': articleState.fontFamilyOption.value,
+					'--font-size': articleState.fontSizeOption.value,
+					'--font-color': articleState.fontColor.value,
+					'--container-width': articleState.contentWidth.value,
+					'--bg-color': articleState.backgroundColor.value,
 				} as CSSProperties
 			}>
-			<ArticleParamsForm currentAppState={appState} setAppState={setAppState} />
+			<ArticleParamsForm
+				currentArticleState={articleState}
+				setArticleState={setArticleState}
+			/>
 			<Article />
 		</main>
 	);

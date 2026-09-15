@@ -26,8 +26,8 @@ import {
 } from 'src/constants/articleProps';
 
 interface ArticleParamsFormProps {
-	currentAppState: ArticleStateType;
-	setAppState: Dispatch<SetStateAction<ArticleStateType>>;
+	currentArticleState: ArticleStateType;
+	setArticleState: Dispatch<SetStateAction<ArticleStateType>>;
 }
 
 /**
@@ -35,12 +35,16 @@ interface ArticleParamsFormProps {
  * Управляет локальным состоянием формы до момента отправки (применения) конфигурации.
  */
 export const ArticleParamsForm = ({
-	currentAppState,
-	setAppState,
+	currentArticleState,
+	setArticleState,
 }: ArticleParamsFormProps) => {
 	const [isFormOpen, setIsFormOpen] = useState(false);
 	const formRef = useRef<HTMLDivElement>(null);
-	const [formState, setFormState] = useState<ArticleStateType>(currentAppState);
+	const [formState, setFormState] =
+		useState<ArticleStateType>(currentArticleState);
+	useEffect(() => {
+		setFormState(currentArticleState);
+	}, [currentArticleState]);
 
 	// Синхронизация локальной формы с внешним состоянием при сбросе или внешних изменениях
 	useEffect(() => {
@@ -84,12 +88,12 @@ export const ArticleParamsForm = ({
 
 	const handleSubmit = (event: FormEvent) => {
 		event.preventDefault();
-		setAppState(formState);
+		setArticleState(formState);
 	};
 
 	const handleReset = (event: FormEvent) => {
 		event.preventDefault();
-		setAppState(defaultArticleState);
+		setArticleState(defaultArticleState);
 		setFormState(defaultArticleState);
 	};
 
