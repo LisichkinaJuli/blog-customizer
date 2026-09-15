@@ -38,7 +38,7 @@ export const ArticleParamsForm = ({
 	currentAppState,
 	setAppState,
 }: ArticleParamsFormProps) => {
-	const [isOpen, setIsOpen] = useState(false);
+	const [isFormOpen, setIsFormOpen] = useState(false);
 	const formRef = useRef<HTMLDivElement>(null);
 	const [formState, setFormState] = useState<ArticleStateType>(currentAppState);
 
@@ -83,7 +83,7 @@ export const ArticleParamsForm = ({
 	};
 
 	const toggleForm = () => {
-		setIsOpen((prev) => !prev);
+		setIsFormOpen((prev) => !prev);
 	};
 
 	const handleSubmit = (event: FormEvent) => {
@@ -99,10 +99,10 @@ export const ArticleParamsForm = ({
 
 	return (
 		<div ref={formRef}>
-			<ArrowButton isOpen={isOpen} onClick={toggleForm} />
+			<ArrowButton isOpen={isFormOpen} onClick={toggleForm} />
 			<aside
 				className={clsx(styles.container, {
-					[styles.container_open]: isOpen,
+					[styles.container_open]: isFormOpen,
 				})}>
 				<form
 					className={styles.form}
