@@ -44,8 +44,32 @@ export const ArticleParamsForm = ({
 
 	// Синхронизация локальной формы с внешним состоянием при сбросе или внешних изменениях
 	useEffect(() => {
-		setFormState(currentAppState);
-	}, [currentAppState]);
+		if (!isFormOpen) return;
+
+		// Обработчик клика вне формы
+		const handleOutsideClick = (event: MouseEvent) => {
+			if (formRef.current && !formRef.current.contains(event.target as Node)) {
+				setIsFormOpen(false);
+			}
+		};
+
+		// Обработчик нажатия на клавишу Escape
+		const handleKeyDown = (event: KeyboardEvent) => {
+			if (event.key === 'Escape') {
+				setIsFormOpen(false);
+			}
+		};
+
+		// Подписываемся на события мыши и клавиатуры
+		document.addEventListener('mousedown', handleOutsideClick);
+		document.addEventListener('keydown', handleKeyDown);
+
+		// Навешиваем cleanup-функцию для очистки обоих слушателей
+		return () => {
+			document.removeEventListener('mousedown', handleOutsideClick);
+			document.removeEventListener('keydown', handleKeyDown);
+		};
+	}, [isFormOpen]);
 
 	const handleFontFamilyChange = (selectedOption: OptionType) => {
 		setFormState((prev) => ({
