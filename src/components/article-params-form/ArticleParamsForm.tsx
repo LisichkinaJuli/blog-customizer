@@ -1,20 +1,164 @@
+import {
+	useState,
+	useRef,
+	useEffect,
+	FormEvent,
+	Dispatch,
+	SetStateAction,
+} from 'react';
 import { ArrowButton } from 'src/ui/arrow-button';
 import { Button } from 'src/ui/button';
+import { Select } from 'src/ui/select';
+import { RadioGroup } from 'src/ui/radio-group';
+import clsx from 'clsx';
 
 import styles from './ArticleParamsForm.module.scss';
 
-export const ArticleParamsForm = () => {
+import {
+	ArticleStateType,
+	defaultArticleState,
+	fontFamilyOptions,
+	fontSizeOptions,
+	fontColors,
+	backgroundColors,
+	contentWidthArr,
+	OptionType,
+} from 'src/constants/articleProps';
+
+interface ArticleParamsFormProps {
+	currentArticleState: ArticleStateType;
+	setArticleState: Dispatch<SetStateAction<ArticleStateType>>;
+}
+
+/**
+ * Компонент боковой панели с формой кастомизации стилей статьи.
+ * Управляет локальным состоянием формы до момента отправки (применения) конфигурации.
+ */
+export const ArticleParamsForm = ({
+	currentArticleState,
+	setArticleState,
+}: ArticleParamsFormProps) => {
+	const [isFormOpen, setIsFormOpen] = useState(false);
+	const formRef = useRef<HTMLDivElement>(null);
+	const [formState, setFormState] =
+		useState<ArticleStateType>(currentArticleState);
+	useEffect(() => {
+		setFormState(currentArticleState);
+	}, [currentArticleState]);
+
+	// Синхронизация локальной формы с внешним состоянием при сбросе или внешних изменениях
+	useEffect(() => {
+		if (!isFormOpen) return;
+
+		// Обработчик клика вне формы
+		const handleOutsideClick = (event: MouseEvent) => {
+			if (formRef.current && !formRef.current.contains(event.target as Node)) {
+				setIsFormOpen(false);
+			}
+		};
+
+		// Обработчик нажатия на клавишу Escape
+		const handleKeyDown = (event: KeyboardEvent) => {
+			if (event.key === 'Escape') {
+				setIsFormOpen(false);
+			}
+		};
+
+		// Подписываемся на события мыши и клавиатуры
+		document.addEventListener('mousedown', handleOutsideClick);
+		document.addEventListener('keydown', handleKeyDown);
+
+		// Навешиваем cleanup-функцию для очистки обоих слушателей
+		return () => {
+			document.removeEventListener('mousedown', handleOutsideClick);
+			document.removeEventListener('keydown', handleKeyDown);
+		};
+	}, [isFormOpen]);
+
+	const handleFieldChange =
+		(field: keyof ArticleStateType) => (selectedOption: OptionType) => {
+			setFormState((prev) => ({
+				...prev,
+				[field]: selectedOption,
+			}));
+		};
+	const toggleForm = () => {
+		setIsFormOpen((prev) => !prev);
+	};
+
+	const handleSubmit = (event: FormEvent) => {
+		event.preventDefault();
+		setArticleState(formState);
+	};
+
+	const handleReset = (event: FormEvent) => {
+		event.preventDefault();
+		setArticleState(defaultArticleState);
+		setFormState(defaultArticleState);
+	};
+
 	return (
-		<>
-			<ArrowButton isOpen={false} onClick={() => {}} />
-			<aside className={styles.container}>
-				<form className={styles.form}>
+		<div ref={formRef}>
+			<ArrowButton isOpen={isFormOpen} onClick={toggleForm} />
+			<aside
+				className={clsx(styles.container, {
+					[styles.container_open]: isFormOpen,
+				})}>
+				<form
+					className={styles.form}
+					onSubmit={handleSubmit}
+					onReset={handleReset}>
+					<h2 className={styles.title}>Задайте параметры</h2>
+
+					<Select
+						selected={formState.fontFamilyOption}
+						options={fontFamilyOptions}
+						placeholder='Выберите шрифт'
+						title='Шрифт'
+						onChange={handleFieldChange('fontFamilyOption')}
+					/>
+
+					<RadioGroup
+						name='fontSize'
+						options={fontSizeOptions}
+						selected={formState.fontSizeOption}
+						onChange={handleFieldChange('fontSizeOption')}
+						title='Размер шрифта'
+					/>
+
+					{/* Разделитель между блоком типографики и блоком цветов/размеров */}
+					<div className={styles.divider} />
+
+					<Select
+						selected={formState.fontColor}
+						options={fontColors}
+						placeholder='Выберите цвет шрифта'
+						title='Цвет шрифта'
+						onChange={handleFieldChange('fontColor')}
+					/>
+
+					<Select
+						selected={formState.backgroundColor}
+						options={backgroundColors}
+						placeholder='Выберите цвет фона'
+						title='Цвет фона'
+						onChange={handleFieldChange('backgroundColor')}
+					/>
+
+					<Select
+						selected={formState.contentWidth}
+						options={contentWidthArr}
+						placeholder='Выберите ширину контента'
+						title='Ширина контента'
+						onChange={handleFieldChange('contentWidth')}
+					/>
+
 					<div className={styles.bottomContainer}>
 						<Button title='Сбросить' htmlType='reset' type='clear' />
 						<Button title='Применить' htmlType='submit' type='apply' />
 					</div>
 				</form>
 			</aside>
-		</>
+		</div>
 	);
 };
